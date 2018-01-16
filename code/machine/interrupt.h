@@ -36,6 +36,7 @@
 #include "copyright.h"
 #include "list.h"
 #include "callback.h"
+#include "syscall.h"
 
 // Interrupts can be disabled (IntOff) or enabled (IntOn)
 enum IntStatus { IntOff, IntOn };
