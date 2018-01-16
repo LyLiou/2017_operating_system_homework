@@ -288,7 +288,8 @@ FileSystem::Remove(char *name, bool rec)
 
     fileHdr->Deallocate(freeMap);  		// remove data blocks
     freeMap->Clear(sector);			// remove header block
-    directory->Remove(name);
+    if(rec) directory->RemoveChild(name);
+    else directory->Remove(name);
 
     freeMap->WriteBack(freeMapFile);		// flush to disk
     directory->WriteBack(directoryFile);        // flush to disk
