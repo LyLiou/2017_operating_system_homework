@@ -116,12 +116,12 @@ Copy(char *from, char *to)
         Close(fd);
         return;
     }
-    char fileName[255];
+    char fileName[256];
     for(int j=0;j<pathLen;++j){ //remove / at begin
         fileName[j]=to[j+1];
     }
     pathLen--;
-    char destDir[255];
+    char destDir[256];
     if(pathLen!=0){
         for(int i=pathLen-1;i>=0;i--){
             if(to[i]=='/'){
@@ -357,7 +357,10 @@ main(int argc, char **argv)
 		kernel->fileSystem->Print();
     }
     if (dirListFlag) {
-		kernel->fileSystem->List();
+        for(int i=0;listDirectoryName[i];++i){
+            listDirectoryName[i]=listDirectoryName[i+1];
+        }
+		kernel->fileSystem->List(listDirectoryName);
     }
 	if (mkdirFlag) {
 		// MP4 mod tag

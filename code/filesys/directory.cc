@@ -170,11 +170,30 @@ Directory::Remove(char *name)
 //----------------------------------------------------------------------
 
 void
-Directory::List()
+Directory::List(char *dir)
 {
-   for (int i = 0; i < tableSize; i++)
-	if (table[i].inUse)
-	    printf("%s\n", table[i].name);
+    int len=strlen(dir);
+    bool flag=true;
+    for (int i = 0; i < tableSize; i++){
+        if (table[i].inUse){
+            for(int j=0;table[i].name[j];++j){
+                if(j<len){
+                    if(dir[j]!=table[i].name[j]){
+                        flag=false;
+                        break;
+                    }
+                }else{
+                    if(table[i].name[j]=='/' && j!=len){
+                        flag=false;
+                        break;
+                    }
+                }
+            }
+            if(strlen(table[[i].name)==len) flag=false;
+            if(flag) printf("%s\n", table[i].name);
+            flag=true;
+        }
+    }
 }
 
 //----------------------------------------------------------------------
