@@ -114,7 +114,11 @@ typedef int OpenFileId;
 /* Create a Nachos file, with name "name" */
 /* Note: Create does not open the file.   */
 /* Return 1 on success, negative error code on failure */
+#ifdef FILESYS_STUB
 int Create(char *name);
+#else
+int Create(char *name, int size);
+#endif
 
 /* Remove a Nachos file, with name "name" */
 int Remove(char *name);
