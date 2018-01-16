@@ -306,7 +306,7 @@ FileSystem::List(char *dir)
     Directory *directory = new Directory(NumDirEntries);
 
     directory->FetchFrom(directoryFile);
-    directory->List(directoryFile);
+    directory->List(dir);
     delete directory;
 }
 
