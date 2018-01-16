@@ -170,7 +170,7 @@ Directory::Remove(char *name)
 //----------------------------------------------------------------------
 
 void
-Directory::List(char *dir, bool rec)
+Directory::List(char *dir, bool rec, int layer)
 {
     int len=strlen(dir);
     bool flag=true;
@@ -191,6 +191,7 @@ Directory::List(char *dir, bool rec)
                 }
             }
             if(flag){
+                for(int j=0;j<layer;++j) printf("  ");
                 printf("%s\n", table[i].name+len);
                 if(table[i].name[strlen(table[i].name)-1]=='/' && rec){
                     List(table[i].name, true);
