@@ -328,6 +328,7 @@ main(int argc, char **argv)
 		kernel->fileSystem->Print();
     }
     if (dirListFlag) {
+        if(strlen(listDirectoryName)!=1) strcat(listDirectoryName, "/");
 		kernel->fileSystem->List(listDirectoryName, recursiveListFlag);
     }
 	if (mkdirFlag) {
