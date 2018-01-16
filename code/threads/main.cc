@@ -360,7 +360,7 @@ main(int argc, char **argv)
         for(int i=0;listDirectoryName[i];++i){
             listDirectoryName[i]=listDirectoryName[i+1];
         }
-		kernel->fileSystem->List(listDirectoryName);
+		kernel->fileSystem->List(listDirectoryName, recursiveListFlag);
     }
 	if (mkdirFlag) {
 		// MP4 mod tag
