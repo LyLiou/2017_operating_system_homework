@@ -53,7 +53,7 @@ ExceptionHandler(ExceptionType which)
 {
     int type = kernel->machine->ReadRegister(2);
 	int val, result, size;
-	char* name, buf;
+	char *name, *buf;
 	OpenFileId id;
     int status, exit, threadID, programID;
 	DEBUG(dbgSys, "Received Exception " << which << " type: " << type << "\n");
