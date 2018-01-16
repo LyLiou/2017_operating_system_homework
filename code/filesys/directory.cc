@@ -122,7 +122,7 @@ int Directory::FindChild(char *dir)
     int result=-1, len=strlen(dir);
 
     for (int i = 0; i < tableSize; i++){
-        if (table[i].inUse && !strncmp(table[i].name, dir, len)){
+        if (table[i].inUse && !strncmp(table[i].name, dir, len-1)){
     	    result = i;
             break;
         }
