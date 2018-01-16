@@ -43,11 +43,7 @@ Directory::Directory(int size)
 	
     tableSize = size;
     for (int i = 0; i < tableSize; i++)
-    {
-        table[i].inUse = FALSE;
-        table[i].isDirectory = FALSE;
-    }
-	
+	table[i].inUse = FALSE;
 }
 
 //----------------------------------------------------------------------
@@ -115,22 +111,11 @@ Directory::FindIndex(char *name)
 int
 Directory::Find(char *name)
 {
-    int temp = FindIndex(name);
+    int i = FindIndex(name);
 
-    if (temp != -1)
-	    return table[temp].sector;
+    if (i != -1)
+	return table[i].sector;
     return -1;
-}
-
-bool
-Directory::IsDirectory(char *name)
-{
-    int temp = FindIndex(name);
-    if(temp!=-1)
-    {
-        return table[temp].isDirectory;
-    }
-    return temp;
 }
 
 //----------------------------------------------------------------------
@@ -187,45 +172,9 @@ Directory::Remove(char *name)
 void
 Directory::List()
 {
-   int Count = 0;
-   for (int i = 0; i < tableSize; i++, Count++)
+   for (int i = 0; i < tableSize; i++)
 	if (table[i].inUse)
-    {
-        if(table[i].isDirectory)
-        {
-            printf("[%d] %s D\n", Count, table[i].name);
-        }
-        else
-        {
-            printf("[%d] %s F\n", Count, table[i].name);
-        }
-    }
-}
-
-void 
-Directory::RecursiveList()
-{
-	Directory *subDir = new Directory(NumDirEntries);	
-	OpenFile *open_buff;
-
-	int Count = 0;
-    for (int i = 0; i < tableSize; i++,Count++)
-    if (table[i].inUse){
-        if(table[i].isDirectory)		
-        {
-            printf("[%d] %s D\n", Count, table[i].name);
-        }
-        else
-        {
-            printf("[%d] %s F\n", Count, table[i].name);
-        }
-
-		if(table[i].isDirectory){
-			open_buff = new OpenFile(table[i].sector);
-			subDir->FetchFrom(open_buff);
-			subDir->RecursiveList();
-		}
-    }
+	    printf("%s\n", table[i].name);
 }
 
 //----------------------------------------------------------------------
