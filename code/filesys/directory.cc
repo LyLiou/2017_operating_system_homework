@@ -194,7 +194,7 @@ Directory::List(char *dir, bool rec, int layer)
                 for(int j=0;j<layer;++j) printf("  ");
                 printf("%s\n", table[i].name+len);
                 if(table[i].name[strlen(table[i].name)-1]=='/' && rec){
-                    List(table[i].name, true);
+                    List(table[i].name, true, layer+1);
                 }
             }
             flag=true;
