@@ -34,6 +34,27 @@ int SysCreate(char *filename)
 	// 0: failed
 	return kernel->interrupt->CreateFile(filename);
 }
+#else
+int SysCreate(char *name, int size)
+{
+	return kernel->interrupt->Create(name, size);
+}
+OpenFileId SysOpen(char *name)
+{
+	return kernel->interrupt->Open(name);
+}
+int SysRead(char *buf, int size, OpenFileId id)
+{
+	return kernel->interrupt->Read(buf, size, id);
+}
+int SysWrite(char *buf, int size, OpenFileId id)
+{
+	return kernel->interrupt->Write(buf, size, id);
+}
+int SysClose(OpenFileId id)
+{
+	return kernel->interrupt->Close(id);
+}
 #endif
 
 

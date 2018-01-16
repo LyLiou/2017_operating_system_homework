@@ -32,6 +32,7 @@ Kernel::Kernel(int argc, char **argv)
     consoleOut = NULL;         // default is stdout
 #ifndef FILESYS_STUB
     formatFlag = FALSE;
+    open_file=NULL;
 #endif
     reliability = 1;            // network reliability, default is 1.0
     hostName = 0;               // machine id, also UNIX socket name
@@ -333,6 +334,33 @@ int Kernel::Exec(char* name)
 int Kernel::CreateFile(char *filename)
 {
 	return fileSystem->Create(filename);
+}
+#else
+int Kernel::CreateFile(char *name, int size)
+{
+    return fileSystem->Create(name, size);
+}
+OpenFileId Kernel::Open(char *name)
+{
+    open_file = fileSystem->Open(name);
+    return open_file!=NULL ? OpenFileId(777) : OpenFileId(0);
+    //it's not good but we can only open one file at the same time......
+}
+int Kernel::Read(char *buf, int size, OpenFileId id)
+{
+    if(id<=0) return 0;
+    return open_file->Read(buf, size);
+}
+int Kernel::Write(char *buf, int size, OpenFileId id)
+{
+    if(id<=0) return 0;
+    return open_file->Write(buf, size);
+}
+int Kernel::Close(OpenFileId id)
+{
+    if(id<=0) return 0;
+    delete open_file;
+    return 1;
 }
 #endif
 

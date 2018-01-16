@@ -50,6 +50,12 @@ class Kernel {
 
 	#ifdef FILESYS_STUB	
 	int CreateFile(char* filename); // fileSystem call
+    #else
+    int Create(char *name, int size);
+    OpenFileId Open(char *name);
+    int Read(char *buf, int size, OpenFileId id);
+    int Write(char *buf, int size, OpenFileId id);
+    int Close(OpenFileId id);
 	#endif
 
 // These are public for notational convenience; really, 
@@ -83,6 +89,7 @@ class Kernel {
     char *consoleOut;           // file to send console output to
 #ifndef FILESYS_STUB
     bool formatFlag;          // format the disk if this is true
+    OpenFile *open_file; //the file opened now
 #endif
 };
 

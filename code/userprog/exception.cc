@@ -89,6 +89,91 @@ ExceptionHandler(ExceptionType which)
 			return;
 			ASSERTNOTREACHED();
             break;
+		#else
+		case SC_Create:
+			val = kernel->machine->ReadRegister(4);
+			char *name = &(kernel->machine->mainMemory[val]);
+			//cout << filename << endl;
+			
+			size=(int)kernel->machine->ReadRegister(5);
+			
+			int result=SysCreate(name, size);
+			kernel->machine->WriteRegister(2, result);
+			
+			kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
+			kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
+			kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg)+4);
+			return;
+			ASSERTNOTREACHED();
+            break;
+		case SC_Open:
+			val = kernel->machine->ReadRegister(4);
+			char *name = &(kernel->machine->mainMemory[val]);
+			//cout << filename << endl;
+			
+			OpenFileId id=SysOpen(name);
+		
+			kernel->machine->WriteRegister(2, int(id));
+
+			/* set previous programm counter (debugging only)*/
+	  		kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
+			/* set programm counter to next instruction (all Instructions are 4 byte wide)*/
+	  		kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
+	 		/* set next programm counter for brach execution */
+	 		kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg)+4);
+			return;
+			ASSERTNOTREACHED();
+			break;
+		case SC_Read:
+			val = kernel->machine->ReadRegister(4);
+			int size = kernel->machine->ReadRegister(5);
+			OpenFileId id = kernel->machine->ReadRegister(6);
+
+			char *buf = &(kernel->machine->mainMemory[val]);
+			int result=SysRead(buf, size, id);
+			kernel->machine->WriteRegister(2, result);
+
+			/* set previous programm counter (debugging only)*/
+	  		kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
+			/* set programm counter to next instruction (all Instructions are 4 byte wide)*/
+	  		kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
+	 		/* set next programm counter for brach execution */
+	 		kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg)+4);
+			return;
+			ASSERTNOTREACHED();
+			break;
+		case SC_Write:
+			val = kernel->machine->ReadRegister(4);
+			int size = kernel->machine->ReadRegister(5);
+			OpenFileId id = kernel->machine->ReadRegister(6);
+
+			char *buf = &(kernel->machine->mainMemory[val]);
+			int result=SysWrite(buf, size, id);
+			kernel->machine->WriteRegister(2, result);
+
+			/* set previous programm counter (debugging only)*/
+	  		kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
+			/* set programm counter to next instruction (all Instructions are 4 byte wide)*/
+	  		kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
+	 		/* set next programm counter for brach execution */
+	 		kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg)+4);
+			return;
+			ASSERTNOTREACHED();
+			break;
+		case SC_Close:
+			OpenFileId id = kernel->machine->ReadRegister(4);
+			int result=SysClose(id);
+			kernel->machine->WriteRegister(2, result);
+
+			/* set previous programm counter (debugging only)*/
+	  		kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
+			/* set programm counter to next instruction (all Instructions are 4 byte wide)*/
+	  		kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
+	 		/* set next programm counter for brach execution */
+	 		kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg)+4);
+			return;
+			ASSERTNOTREACHED();
+			break;
 		#endif
       	case SC_Add:
 			DEBUG(dbgSys, "Add " << kernel->machine->ReadRegister(4) << " + " << kernel->machine->ReadRegister(5) << "\n");

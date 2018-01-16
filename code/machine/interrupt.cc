@@ -253,8 +253,28 @@ Interrupt::CreateFile(char *filename)
 {
     return kernel->CreateFile(filename);
 }
+#else
+int Interrupt::Create(char *name, int size)
+{
+    return kernel->Create(name, size);
+}
+OpenFileId Interrupt::Open(char *name)
+{
+    return kernel->Open(name);
+}
+int Interrupt::Read(char *buf, int size, OpenFileId id)
+{
+    return kernel->Read(buf, size, id);
+}
+int Interrupt::Write(char *buf, int size, OpenFileId id)
+{
+    return kernel->Write(buf, size, id);
+}
+int Interrupt::Close(OpenFileId id)
+{
+    return kernel->Close(id);
+}
 #endif
-
 //----------------------------------------------------------------------
 // Interrupt::Schedule
 // 	Arrange for the CPU to be interrupted when simulated time
