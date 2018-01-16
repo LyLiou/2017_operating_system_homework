@@ -177,6 +177,22 @@ Directory::Remove(char *name)
     table[i].inUse = FALSE;
     return TRUE;	
 }
+bool Directory::RemoveChild(char *dir)
+{ 
+    int result=-1, len=strlen(dir);
+
+    for (int i = 0; i < tableSize; i++){
+        if (table[i].inUse && !strncmp(table[i].name, dir, len-1)){
+    	    result = i;
+            break;
+        }
+    }
+
+    if (result == -1)
+	return FALSE; 		// name not in directory
+    table[result].inUse = FALSE;
+    return TRUE;	
+}
 
 //----------------------------------------------------------------------
 // Directory::List

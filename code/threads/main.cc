@@ -320,6 +320,7 @@ main(int argc, char **argv)
 
 #ifndef FILESYS_STUB
     if (removeFileName != NULL) {
+        if(strlen(removeFileName)!=1) strcat(removeFileName, "/");
         while(kernel->fileSystem->Remove(removeFileName, recursiveRemoveFlag)){};
     }
     if (copyUnixFileName != NULL && copyNachosFileName != NULL) {
