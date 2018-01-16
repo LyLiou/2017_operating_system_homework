@@ -183,7 +183,7 @@ Directory::List(char *dir)
                         break;
                     }
                 }else{
-                    if(table[i].name[j]=='/' && j!=len){
+                    if(table[i].name[j]=='/' && table[i].name[j+1] && j!=len){
                         flag=false;
                         break;
                     }
