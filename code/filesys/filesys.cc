@@ -264,7 +264,7 @@ FileSystem::Open(char *name)
 //----------------------------------------------------------------------
 
 bool
-FileSystem::Remove(char *name)
+FileSystem::Remove(char *name, bool rec)
 { 
     Directory *directory;
     PersistentBitmap *freeMap;
@@ -273,7 +273,10 @@ FileSystem::Remove(char *name)
     
     directory = new Directory(NumDirEntries);
     directory->FetchFrom(directoryFile);
-    sector = directory->Find(name);
+    
+    if(rec) sector=directory->FindChild(name);
+    else sector = directory->Find(name);
+    
     if (sector == -1) {
        delete directory;
        return FALSE;			 // file not found 

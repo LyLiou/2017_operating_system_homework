@@ -117,6 +117,20 @@ Directory::Find(char *name)
 	return table[i].sector;
     return -1;
 }
+int Directory::FindChild(char *dir)
+{
+    int result=-1, len=strlen(dir);
+
+    for (int i = 0; i < tableSize; i++){
+        if (table[i].inUse && !strncmp(table[i].name, dir, len)){
+    	    result = i;
+            break;
+        }
+    }
+    if (result != -1)
+	return table[result].sector;
+    return -1;
+}
 
 //----------------------------------------------------------------------
 // Directory::Add

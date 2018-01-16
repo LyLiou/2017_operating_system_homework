@@ -159,13 +159,14 @@ Print(char *name)
 //      Create a new directory with "name"
 //----------------------------------------------------------------------
 static void
-CreateDirectory(char *name) //pseudoDirectory
+CreateDirectory(char *name)
 {
     char dirName[11];
     strcpy(dirName, name);
     strcat(dirName, "/");
     kernel->fileSystem->Create(dirName, 0);
 	// MP4 Assignment
+    // All directories are Illusion.
 }
 
 //----------------------------------------------------------------------
@@ -319,7 +320,7 @@ main(int argc, char **argv)
 
 #ifndef FILESYS_STUB
     if (removeFileName != NULL) {
-		kernel->fileSystem->Remove(removeFileName);
+        while(kernel->fileSystem->Remove(removeFileName, recursiveRemoveFlag)){};
     }
     if (copyUnixFileName != NULL && copyNachosFileName != NULL) {
 		Copy(copyUnixFileName,copyNachosFileName);
