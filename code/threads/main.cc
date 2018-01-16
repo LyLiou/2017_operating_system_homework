@@ -99,44 +99,18 @@ Copy(char *from, char *to)
 // Create a Nachos file of the same length
     DEBUG('f', "Copying file " << from << " of size " << fileLength <<  " to file " << to);
     
-    //pseudoDirectory
-    int pathLen=strlen(to);
     if(from[strlen(from)-1]=='/'){
         cout << "Cannot copy a directory.\n";
         Close(fd);
         return;
     }
-    if(to[0]!='/'){
-        cout << "Destination must be a absolute path.\n";
-        Close(fd);
-        return;
-    }
-    if(to[pathLen-1]=='/'){
-        cout << "Destination cannot be a directory.\n";
-        Close(fd);
-        return;
-    }
-    char fileName[256];
-    for(int j=0;j<pathLen;++j){ //remove / at begin
-        fileName[j]=to[j+1];
-    }
-    pathLen--;
-    char destDir[256];
-    if(pathLen!=0){
-        for(int i=pathLen-1;i>=0;i--){
-            if(to[i]=='/'){
-                strncpy(destDir, to, i+1);
-                destDir[i+1]='\0';
-            }
-        }
-    }
-    if (!kernel->fileSystem->Create(fileName, fileLength)) {   // Create Nachos file
-        printf("Copy: couldn't create output file %s\n", fileName);
+    if (!kernel->fileSystem->Create(to, fileLength)) {   // Create Nachos file
+        printf("Copy: couldn't create output file %s\n", to);
         Close(fd);
         return;
     }
     
-    openFile = kernel->fileSystem->Open(fileName);
+    openFile = kernel->fileSystem->Open(to);
     ASSERT(openFile != NULL);
     
 // Copy the data in TransferSize chunks
@@ -187,7 +161,7 @@ Print(char *name)
 static void
 CreateDirectory(char *name) //pseudoDirectory
 {
-    char dirName[10];
+    char dirName[11];
     strcpy(dirName, name);
     strcat(dirName, "/");
     kernel->fileSystem->Create(dirName, 0);
@@ -345,9 +319,6 @@ main(int argc, char **argv)
 
 #ifndef FILESYS_STUB
     if (removeFileName != NULL) {
-        for(int i=0;removeFileName[i];++i){
-            removeFileName[i]=removeFileName[i+1];
-        }
 		kernel->fileSystem->Remove(removeFileName);
     }
     if (copyUnixFileName != NULL && copyNachosFileName != NULL) {
@@ -357,22 +328,13 @@ main(int argc, char **argv)
 		kernel->fileSystem->Print();
     }
     if (dirListFlag) {
-        for(int i=0;listDirectoryName[i];++i){
-            listDirectoryName[i]=listDirectoryName[i+1];
-        }
 		kernel->fileSystem->List(listDirectoryName, recursiveListFlag);
     }
 	if (mkdirFlag) {
 		// MP4 mod tag
-        for(int i=0;createDirectoryName[i];++i){
-            createDirectoryName[i]=createDirectoryName[i+1];
-        }
 		CreateDirectory(createDirectoryName);
 	}
     if (printFileName != NULL) {
-        for(int i=0;printFileName[i];++i){
-            printFileName[i]=printFileName[i+1];
-        }
         Print(printFileName);
     }
 #endif // FILESYS_STUB
