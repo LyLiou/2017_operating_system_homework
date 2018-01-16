@@ -131,7 +131,7 @@ ExceptionHandler(ExceptionType which)
 			size = kernel->machine->ReadRegister(5);
 			id = kernel->machine->ReadRegister(6);
 
-			*buf = &(kernel->machine->mainMemory[val]);
+			buf = &(kernel->machine->mainMemory[val]);
 			result=SysRead(buf, size, id);
 			kernel->machine->WriteRegister(2, result);
 
@@ -149,7 +149,7 @@ ExceptionHandler(ExceptionType which)
 			size = kernel->machine->ReadRegister(5);
 			id = kernel->machine->ReadRegister(6);
 
-			*buf = &(kernel->machine->mainMemory[val]);
+			buf = &(kernel->machine->mainMemory[val]);
 			result=SysWrite(buf, size, id);
 			kernel->machine->WriteRegister(2, result);
 
