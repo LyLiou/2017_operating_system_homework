@@ -153,8 +153,12 @@ Print(char *name)
 //      Create a new directory with "name"
 //----------------------------------------------------------------------
 static void
-CreateDirectory(char *name)
+CreateDirectory(char *name) //pseudoDirectory
 {
+    char dirName[10];
+    strcpy(dirName, name);
+    strcat(dirName, "/");
+    kernel->fileSystem->Create(dirName, 0);
 	// MP4 Assignment
 }
 
