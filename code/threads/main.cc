@@ -111,7 +111,7 @@ Copy(char *from, char *to)
         Close(fd);
         return;
     }
-    if(to[pathLen]=='/'){
+    if(to[pathLen-1]=='/'){
         cout << "Destination cannot be a directory.\n";
         Close(fd);
         return;
@@ -345,6 +345,9 @@ main(int argc, char **argv)
 
 #ifndef FILESYS_STUB
     if (removeFileName != NULL) {
+        for(int i=0;removeFileName[i];++i){
+            removeFileName[i]=removeFileName[i+1];
+        }
 		kernel->fileSystem->Remove(removeFileName);
     }
     if (copyUnixFileName != NULL && copyNachosFileName != NULL) {
@@ -358,10 +361,16 @@ main(int argc, char **argv)
     }
 	if (mkdirFlag) {
 		// MP4 mod tag
+        for(int i=0;createDirectoryName[i];++i){
+            createDirectoryName[i]=createDirectoryName[i+1];
+        }
 		CreateDirectory(createDirectoryName);
 	}
     if (printFileName != NULL) {
-      Print(printFileName);
+        for(int i=0;printFileName[i];++i){
+            printFileName[i]=printFileName[i+1];
+        }
+        Print(printFileName);
     }
 #endif // FILESYS_STUB
 
