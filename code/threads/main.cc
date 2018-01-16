@@ -122,19 +122,11 @@ Copy(char *from, char *to)
     }
     pathLen--;
     char destDir[255];
-    Directory *directory;
     if(pathLen!=0){
         for(int i=pathLen-1;i>=0;i--){
             if(to[i]=='/'){
                 strncpy(destDir, to, i+1);
                 destDir[i+1]='\0';
-            }
-            directory = new Directory(NumDirEntries);
-            directory->FetchFrom(kernel->fileSystem->directoryFile);
-            if (directory->Find(destDir) == -1){
-                cout << "Directory not found.\n";
-                Close(fd);
-                return;
             }
         }
     }
