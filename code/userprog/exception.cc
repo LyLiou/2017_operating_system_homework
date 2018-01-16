@@ -52,7 +52,9 @@ void
 ExceptionHandler(ExceptionType which)
 {
     int type = kernel->machine->ReadRegister(2);
-	int val;
+	int val, result, size;
+	char* name, buf;
+	OpenFileId id;
     int status, exit, threadID, programID;
 	DEBUG(dbgSys, "Received Exception " << which << " type: " << type << "\n");
     switch (which) {
@@ -92,12 +94,12 @@ ExceptionHandler(ExceptionType which)
 		#else
 		case SC_Create:
 			val = kernel->machine->ReadRegister(4);
-			char *name = &(kernel->machine->mainMemory[val]);
+			name = &(kernel->machine->mainMemory[val]);
 			//cout << filename << endl;
 			
 			size=(int)kernel->machine->ReadRegister(5);
 			
-			int result=SysCreate(name, size);
+			result=SysCreate(name, size);
 			kernel->machine->WriteRegister(2, result);
 			
 			kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
@@ -108,10 +110,10 @@ ExceptionHandler(ExceptionType which)
             break;
 		case SC_Open:
 			val = kernel->machine->ReadRegister(4);
-			char *name = &(kernel->machine->mainMemory[val]);
+			name = &(kernel->machine->mainMemory[val]);
 			//cout << filename << endl;
 			
-			OpenFileId id=SysOpen(name);
+			id=SysOpen(name);
 		
 			kernel->machine->WriteRegister(2, int(id));
 
@@ -126,11 +128,11 @@ ExceptionHandler(ExceptionType which)
 			break;
 		case SC_Read:
 			val = kernel->machine->ReadRegister(4);
-			int size = kernel->machine->ReadRegister(5);
-			OpenFileId id = kernel->machine->ReadRegister(6);
+			size = kernel->machine->ReadRegister(5);
+			id = kernel->machine->ReadRegister(6);
 
-			char *buf = &(kernel->machine->mainMemory[val]);
-			int result=SysRead(buf, size, id);
+			*buf = &(kernel->machine->mainMemory[val]);
+			result=SysRead(buf, size, id);
 			kernel->machine->WriteRegister(2, result);
 
 			/* set previous programm counter (debugging only)*/
@@ -144,11 +146,11 @@ ExceptionHandler(ExceptionType which)
 			break;
 		case SC_Write:
 			val = kernel->machine->ReadRegister(4);
-			int size = kernel->machine->ReadRegister(5);
-			OpenFileId id = kernel->machine->ReadRegister(6);
+			size = kernel->machine->ReadRegister(5);
+			id = kernel->machine->ReadRegister(6);
 
-			char *buf = &(kernel->machine->mainMemory[val]);
-			int result=SysWrite(buf, size, id);
+			*buf = &(kernel->machine->mainMemory[val]);
+			result=SysWrite(buf, size, id);
 			kernel->machine->WriteRegister(2, result);
 
 			/* set previous programm counter (debugging only)*/
@@ -161,8 +163,8 @@ ExceptionHandler(ExceptionType which)
 			ASSERTNOTREACHED();
 			break;
 		case SC_Close:
-			OpenFileId id = kernel->machine->ReadRegister(4);
-			int result=SysClose(id);
+			id = kernel->machine->ReadRegister(4);
+			result=SysClose(id);
 			kernel->machine->WriteRegister(2, result);
 
 			/* set previous programm counter (debugging only)*/
@@ -178,7 +180,6 @@ ExceptionHandler(ExceptionType which)
       	case SC_Add:
 			DEBUG(dbgSys, "Add " << kernel->machine->ReadRegister(4) << " + " << kernel->machine->ReadRegister(5) << "\n");
 			/* Process SysAdd Systemcall*/
-			int result;
 			result = SysAdd(/* int op1 */(int)kernel->machine->ReadRegister(4),
 			/* int op2 */(int)kernel->machine->ReadRegister(5));
 			DEBUG(dbgSys, "Add returning with " << result << "\n");
