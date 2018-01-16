@@ -98,13 +98,53 @@ Copy(char *from, char *to)
 
 // Create a Nachos file of the same length
     DEBUG('f', "Copying file " << from << " of size " << fileLength <<  " to file " << to);
-    if (!kernel->fileSystem->Create(to, fileLength)) {   // Create Nachos file
-        printf("Copy: couldn't create output file %s\n", to);
+    
+    //pseudoDirectory
+    int pathLen=strlen(to);
+    if(from[strlen(from)-1]=='/'){
+        cout << "Cannot copy a directory.\n";
+        Close(fd);
+        return;
+    }
+    if(to[0]!='/'){
+        cout << "Destination must be a absolute path.\n";
+        Close(fd);
+        return;
+    }
+    if(to[pathLen]=='/'){
+        cout << "Destination cannot be a directory.\n";
+        Close(fd);
+        return;
+    }
+    char fileName[255];
+    for(int j=0;j<pathLen;++j){ //remove / at begin
+        fileName[j]=to[j+1];
+    }
+    pathLen--;
+    char destDir[255];
+    Directory *directory;
+    if(pathLen!=0){
+        for(int i=pathLen-1;i>=0;i--){
+            if(to[i]=='/'){
+                strncpy(destDir, to, i+1);
+                destDir[i+1]='\0';
+            }
+            directory = new Directory(NumDirEntries);
+            directory->FetchFrom(kernel->fileSystem->directoryFile);
+            if (directory->Find(destDir) == -1){
+                cout << "Directory not found.\n";
+                Close(fd);
+                return;
+            }
+        }
+    }
+    if (!kernel->fileSystem->Create(fileName, fileLength)) {   // Create Nachos file
+        printf("Copy: couldn't create output file %s\n", fileName);
         Close(fd);
         return;
     }
     
-    openFile = kernel->fileSystem->Open(to);
+    openFile = kernel->fileSystem->Open(fileName);
     ASSERT(openFile != NULL);
     
 // Copy the data in TransferSize chunks
