@@ -43,8 +43,11 @@ Directory::Directory(int size)
 	
     tableSize = size;
     for (int i = 0; i < tableSize; i++)
-	table[i].inUse = FALSE;
-    table[i].isDirectory = FALSE;
+    {
+        table[i].inUse = FALSE;
+        table[i].isDirectory = FALSE;
+    }
+	
 }
 
 //----------------------------------------------------------------------
@@ -112,10 +115,10 @@ Directory::FindIndex(char *name)
 int
 Directory::Find(char *name)
 {
-    int i = FindIndex(name);
+    int temp = FindIndex(name);
 
-    if (i != -1)
-	return table[i].sector;
+    if (temp != -1)
+	    return table[temp].sector;
     return -1;
 }
 
@@ -123,11 +126,11 @@ bool
 Directory::IsDirectory(char *name)
 {
     int temp = FindIndex(name);
-    if(i!=-1)
+    if(temp!=-1)
     {
-        return table[i].isDir;
+        return table[temp].isDirectory;
     }
-    return i;
+    return temp;
 }
 
 //----------------------------------------------------------------------
@@ -188,7 +191,7 @@ Directory::List()
    for (int i = 0; i < tableSize; i++, Count++)
 	if (table[i].inUse)
     {
-        if(table[i].isDir)
+        if(table[i].isDirectory)
         {
             printf("[%d] %s D\n", Count, table[i].name);
         }
@@ -208,7 +211,7 @@ Directory::RecursiveList()
 	int Count = 0;
     for (int i = 0; i < tableSize; i++,Count++)
     if (table[i].inUse){
-        if(table[i].isDir)		
+        if(table[i].isDirectory)		
         {
             printf("[%d] %s D\n", Count, table[i].name);
         }
@@ -217,7 +220,7 @@ Directory::RecursiveList()
             printf("[%d] %s F\n", Count, table[i].name);
         }
 
-		if(table[i].isDir){
+		if(table[i].isDirectory){
 			open_buff = new OpenFile(table[i].sector);
 			subDir->FetchFrom(open_buff);
 			subDir->RecursiveList();

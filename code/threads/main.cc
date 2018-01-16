@@ -320,9 +320,6 @@ main(int argc, char **argv)
     if (dirListFlag) {
 		kernel->fileSystem->List();
     }
-    if (dirListFlag && recursiveListFlag) {
-		kernel->fileSystem->RecursiveList(listDirectoryName);
-	}
 	if (mkdirFlag) {
 		// MP4 mod tag
 		CreateDirectory(createDirectoryName);
