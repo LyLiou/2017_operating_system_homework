@@ -176,6 +176,7 @@ Directory::List(char *dir, bool rec)
     bool flag=true;
     for (int i = 0; i < tableSize; i++){
         if (table[i].inUse){
+            if(strlen(table[i].name)<=len) flag=false;
             for(int j=0;table[i].name[j];++j){
                 if(j<len){
                     if(dir[j]!=table[i].name[j]){
@@ -189,7 +190,6 @@ Directory::List(char *dir, bool rec)
                     }
                 }
             }
-            if(strlen(table[i].name)==len) flag=false;
             if(flag){
                 printf("%s\n", table[i].name+len);
                 if(table[i].name[strlen(table[i].name)-1]=='/' && rec){
