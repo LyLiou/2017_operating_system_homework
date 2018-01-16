@@ -189,7 +189,7 @@ Directory::List(char *dir)
                     }
                 }
             }
-            if(strlen(table[[i].name)==len) flag=false;
+            if(strlen(table[i].name)==len) flag=false;
             if(flag) printf("%s\n", table[i].name);
             flag=true;
         }
