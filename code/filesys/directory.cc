@@ -183,13 +183,13 @@ Directory::List(char *dir, bool rec)
                         break;
                     }
                 }else{
-                    if(table[i].name[j]=='/'){
+                    if(table[i].name[j]=='/' && table[i].name[j+1]){
                         flag=false;
                         break;
                     }
                 }
             }
-            if(strlen(table[i].name)==len && len!=0) flag=false;
+            if(strlen(table[i].name)==len) flag=false;
             if(flag){
                 printf("%s\n", table[i].name+len);
                 // if(table[i].name[strlen(table[i].name)-1]=='/' && rec){
