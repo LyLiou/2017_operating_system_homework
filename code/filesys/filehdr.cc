@@ -29,6 +29,11 @@
 #include "synchdisk.h"
 #include "main.h"
 
+//Using Tree Structure to Handle 64MB Files
+/*#define File4KB (NumDirect * SectorSize)
+#define File64K (NumDirect * NumDirect * SectorSize)
+#define File4MB (NumDirect * NumDirect * NumDirect * SectorSize)*/
+
 //----------------------------------------------------------------------
 // MP4 mod tag
 // FileHeader::FileHeader
@@ -71,16 +76,26 @@ FileHeader::Allocate(PersistentBitmap *freeMap, int fileSize)
 { 
     numBytes = fileSize;
     numSectors  = divRoundUp(fileSize, SectorSize);
+	int SectorsNeeded = numSectors;
+	int SizeoftheFile = 0;
     if (freeMap->NumClear() < numSectors)
 	return FALSE;		// not enough space
 
-    for (int i = 0; i < numSectors; i++) {
-	dataSectors[i] = freeMap->FindAndSet();
-	// since we checked that there was enough free space,
-	// we expect this to succeed
-	ASSERT(dataSectors[i] >= 0);
-    }
-    return TRUE;
+	for(;SectorsNeeded>0;SizeoftheFile++)
+	{
+		int LocationofSectors = freeMap->FindAndSet();
+		dataSectors[SizeoftheFile] = LocationofSectors;
+		ASSERT(dataSectors[SizeoftheFile]>=0);
+		int RecordsofSectors[32];
+		memset(RecordsofSectors,-1,sizeof(RecordsofSectors));
+		for(int i=0;i<32&&SectorsNeeded>0;i++,SectorsNeeded--)
+		{
+			RecordsofSectors[i] = freeMap->FindAndSet();
+			ASSERT(RecordsofSectors[i]>=0);
+		}
+		kernel->synchDisk->WriteSector(LocationofSectors,(char*)RecordsofSectors);
+	}
+	return TRUE;
 }
 
 //----------------------------------------------------------------------
@@ -93,10 +108,19 @@ FileHeader::Allocate(PersistentBitmap *freeMap, int fileSize)
 void 
 FileHeader::Deallocate(PersistentBitmap *freeMap)
 {
-    for (int i = 0; i < numSectors; i++) {
-	ASSERT(freeMap->Test((int) dataSectors[i]));  // ought to be marked!
-	freeMap->Clear((int) dataSectors[i]);
-    }
+   int SectorsIndex = divRoundUp(numSectors,32);
+   int SectorSubpointer[SectorsIndex*32];
+   for(int i=0;i<SectorsIndex;i++)
+   {
+	   ASSERT(freeMap->Test((int)dataSectors[i]));
+	   kernel->synchDisk->ReadSector(dataSectors[i],(char *)SectorsIndex+i*SectorSize);
+	   freeMap->Clear((int)dataSectors[i]);
+   }
+   for(int i=0;i<numSectors;i++)
+   {
+	   ASSERT(freeMap->Test((int)SectorSubpointer[i]));
+	   freeMap->Clear((int)SectorSubpointer[i]);
+   }
 }
 
 //----------------------------------------------------------------------
@@ -154,7 +178,11 @@ FileHeader::WriteBack(int sector)
 int
 FileHeader::ByteToSector(int offset)
 {
-    return(dataSectors[offset / SectorSize]);
+	int DataOffsets = offset/SectorSize%32;
+	int DataIndex = offset/SectorSize/32;
+	int Buffer[32];
+	kernel->synchDisk->ReadSector(dataSectors[DataIndex],(char*)Buffer);
+	return Buffer[DataOffsets];	
 }
 
 //----------------------------------------------------------------------
@@ -177,22 +205,24 @@ FileHeader::FileLength()
 void
 FileHeader::Print()
 {
-    int i, j, k;
+	int i, j, k;
     char *data = new char[SectorSize];
 
     printf("FileHeader contents.  File size: %d.  File blocks:\n", numBytes);
     for (i = 0; i < numSectors; i++)
 	printf("%d ", dataSectors[i]);
     printf("\nFile contents:\n");
-    for (i = k = 0; i < numSectors; i++) {
-	kernel->synchDisk->ReadSector(dataSectors[i], data);
-        for (j = 0; (j < SectorSize) && (k < numBytes); j++, k++) {
-	    if ('\040' <= data[j] && data[j] <= '\176')   // isprint(data[j])
-		printf("%c", data[j]);
-            else
-		printf("\\%x", (unsigned char)data[j]);
-	}
-        printf("\n"); 
+    for (i = k = 0; i < numSectors; i++) 
+	{
+		kernel->synchDisk->ReadSector(dataSectors[i], data);
+        for (j = 0; (j < SectorSize) && (k < numBytes); j++, k++) 
+		{
+	    	if ('\040' <= data[j] && data[j] <= '\176')   // isprint(data[j])
+				printf("%c", data[j]);
+        	else
+				printf("\\%x", (unsigned char)data[j]);
+		}
+    	printf("\n"); 
     }
     delete [] data;
 }

@@ -21,7 +21,7 @@
 
 #define FileNameMaxLen 		9	// for simplicity, we assume 
 					// file names are <= 9 characters long
-
+#define NumDirEntries    64
 // The following class defines a "directory entry", representing a file
 // in the directory.  Each entry gives the name of the file, and where
 // the file's header is to be found on disk.
@@ -32,6 +32,7 @@
 class DirectoryEntry {
   public:
     bool inUse;				// Is this directory entry in use?
+    bool isDirectory;
     int sector;				// Location on disk to find the 
 					//   FileHeader for this file 
     char name[FileNameMaxLen + 1];	// Text name for file, with +1 for 
@@ -67,9 +68,17 @@ class Directory {
 
     void List();			// Print the names of all the files
 					//  in the directory
+
+    void RecursiveList();
+    
     void Print();			// Verbose print of the contents
 					//  of the directory -- all the file
 					//  names and their contents.
+
+    bool IsDirectory(char *name);
+  
+  	DirectoryEntry *getTable(){return table;}
+  	int getTableSize(){return tableSize;}
 
   private:
   

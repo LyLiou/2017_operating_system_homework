@@ -44,6 +44,7 @@ Directory::Directory(int size)
     tableSize = size;
     for (int i = 0; i < tableSize; i++)
 	table[i].inUse = FALSE;
+    table[i].isDirectory = FALSE;
 }
 
 //----------------------------------------------------------------------
@@ -118,6 +119,17 @@ Directory::Find(char *name)
     return -1;
 }
 
+bool
+Directory::IsDirectory(char *name)
+{
+    int temp = FindIndex(name);
+    if(i!=-1)
+    {
+        return table[i].isDir;
+    }
+    return i;
+}
+
 //----------------------------------------------------------------------
 // Directory::Add
 // 	Add a file into the directory.  Return TRUE if successful;
@@ -172,9 +184,45 @@ Directory::Remove(char *name)
 void
 Directory::List()
 {
-   for (int i = 0; i < tableSize; i++)
+   int Count = 0;
+   for (int i = 0; i < tableSize; i++, Count++)
 	if (table[i].inUse)
-	    printf("%s\n", table[i].name);
+    {
+        if(table[i].isDir)
+        {
+            printf("[%d] %s D\n", Count, table[i].name);
+        }
+        else
+        {
+            printf("[%d] %s F\n", Count, table[i].name);
+        }
+    }
+}
+
+void 
+Directory::RecursiveList()
+{
+	Directory *subDir = new Directory(NumDirEntries);	
+	OpenFile *open_buff;
+
+	int Count = 0;
+    for (int i = 0; i < tableSize; i++,Count++)
+    if (table[i].inUse){
+        if(table[i].isDir)		
+        {
+            printf("[%d] %s D\n", Count, table[i].name);
+        }
+        else
+        {
+            printf("[%d] %s F\n", Count, table[i].name);
+        }
+
+		if(table[i].isDir){
+			open_buff = new OpenFile(table[i].sector);
+			subDir->FetchFrom(open_buff);
+			subDir->RecursiveList();
+		}
+    }
 }
 
 //----------------------------------------------------------------------
