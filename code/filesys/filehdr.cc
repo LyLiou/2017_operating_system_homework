@@ -108,7 +108,7 @@ FileHeader::Allocate(PersistentBitmap *freeMap, int fileSize)
 void 
 FileHeader::Deallocate(PersistentBitmap *freeMap)
 {
-   int SectorsIndex = divRoundUp(numSectors,32);
+   /*int SectorsIndex = divRoundUp(numSectors,32);
    int SectorSubpointer[SectorsIndex*32];
    for(int i=0;i<SectorsIndex;i++)
    {
@@ -120,7 +120,25 @@ FileHeader::Deallocate(PersistentBitmap *freeMap)
    {
 	   ASSERT(freeMap->Test((int)SectorSubpointer[i]));
 	   freeMap->Clear((int)SectorSubpointer[i]);
-   }
+   }*/
+	for(int i=0;i<NumDirect;i++)
+	{
+		if(dataSectors[i] != -1)
+		{
+			int RecordsofSectors[32];
+			memset(RecordsofSectors,-1,sizeof(RecordsofSectors));
+			kernel->synchDisk->ReadSector(dataSectors[i],(char *)RecordsofSectors);
+			for(int j=0;j<32;j++)
+			{
+				if(RecordsofSectors[j]!=-1)
+				{
+					freeMap->Clear(RecordsofSectors[j]);
+				}
+			}
+			freeMap->Clear(dataSectors[i]);
+		}
+	}
+
 }
 
 //----------------------------------------------------------------------

@@ -192,9 +192,9 @@ Directory::List(char *dir, bool rec)
             if(strlen(table[i].name)==len) flag=false;
             if(flag){
                 printf("%s\n", table[i].name+len);
-                // if(table[i].name[strlen(table[i].name)-1]=='/' && rec){
-                //     List(table[i].name, true);
-                // }
+                if(table[i].name[strlen(table[i].name)-1]=='/' && rec){
+                    List(table[i].name, true);
+                }
             }
             flag=true;
         }
