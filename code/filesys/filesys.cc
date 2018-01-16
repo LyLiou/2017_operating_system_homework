@@ -301,7 +301,7 @@ FileSystem::Remove(char *name)
 //----------------------------------------------------------------------
 
 void
-FileSystem::List(char *dir)
+FileSystem::List(char *dir, bool rec)
 {
     Directory *directory = new Directory(NumDirEntries);
 
