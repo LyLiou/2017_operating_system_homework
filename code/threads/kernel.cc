@@ -336,7 +336,7 @@ int Kernel::CreateFile(char *filename)
 	return fileSystem->Create(filename);
 }
 #else
-int Kernel::CreateFile(char *name, int size)
+int Kernel::Create(char *name, int size)
 {
     return fileSystem->Create(name, size);
 }
